@@ -1,10 +1,8 @@
 name: Serenity BDD Pipeline
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  # Esta es la bandera: quita el "push" y deja solo el disparo manual
+  workflow_dispatch: 
 
 jobs:
   test-automation:
