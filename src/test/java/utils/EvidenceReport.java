@@ -30,7 +30,7 @@ public class EvidenceReport {
     private static final DeviceRgb COLOR_GRIS = new DeviceRgb(200, 200, 200);
 
     public static void main(String[] args) {
-        System.out.println("🚀 GENERANDO REPORTE - DISEÑO MINIMALISTA POR COLORES...");
+        System.out.println("🚀 GENERANDO REPORTE - DISEÑO MINIMALISTA CON CARPETAS DINÁMICAS...");
         String jsonPath = "target/site/serenity/";
         String outputPath = obtenerCarpetaSeguencial("target/Evidencias_PDF/"); 
         
@@ -39,7 +39,7 @@ public class EvidenceReport {
             File[] files = folder.listFiles((dir, name) -> name.endsWith(".json") && !name.contains("manifest"));
 
             if (files != null && files.length > 0) {
-                new File(outputPath).mkdirs();
+                // La carpeta raíz ya existe por obtenerCarpetaSeguencial
                 for (File file : files) {
                     generatePdfFromJson(file, outputPath);
                 }
@@ -57,6 +57,8 @@ public class EvidenceReport {
         int con = 1;
         String path;
         while (new File(path = basePath + fecha + "-" + String.format("%03d", con) + "/").exists()) con++;
+        
+        new File(path).mkdirs(); // Creamos la carpeta del día/ejecución
         return path;
     }
 
@@ -65,6 +67,13 @@ public class EvidenceReport {
         String scenarioTitle = json.get("title").getAsString();
         String featureName = json.getAsJsonObject("userStory").get("storyName").getAsString();
         String result = json.get("result").getAsString();
+
+        // --- LÓGICA DE CARPETAS DINÁMICAS ---
+        String carpetaDestino = result.equals("SUCCESS") ? "PASADOS" : "FALLIDOS";
+        File dir = new File(outputPath + carpetaDestino);
+        if (!dir.exists()) {
+            dir.mkdirs(); // Solo se crea si hay un archivo que meter aquí
+        }
         
         // --- TAGS ---
         StringBuilder tagsStr = new StringBuilder();
@@ -85,7 +94,8 @@ public class EvidenceReport {
         try { start = LocalDateTime.parse(startTimeStr); } catch (Exception e) { start = LocalDateTime.now(); }
         LocalDateTime end = start.plusNanos(durationMs * 1000000);
 
-        PdfWriter writer = new PdfWriter(outputPath + "Evidencia_" + scenarioTitle.replace(" ", "_") + ".pdf");
+        // Guardamos el PDF en la subcarpeta correspondiente
+        PdfWriter writer = new PdfWriter(outputPath + carpetaDestino + "/Evidencia_" + scenarioTitle.replace(" ", "_") + ".pdf");
         Document doc = new Document(new PdfDocument(writer));
 
         // --- ENCABEZADO ---
@@ -151,7 +161,6 @@ public class EvidenceReport {
         String res = step.has("result") ? step.get("result").getAsString() : "SUCCESS";
         DeviceRgb colorTitulo = res.equals("SUCCESS") ? COLOR_EXITO : COLOR_FALLO;
 
-        // Título del paso pintado de color según resultado
         doc.add(new Paragraph("PASO " + num)
                 .setBold().setFontSize(16).setFontColor(colorTitulo));
         

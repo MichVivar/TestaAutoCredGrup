@@ -41,21 +41,20 @@ java {
 
 test {
     useJUnitPlatform()
-    failOnNoDiscoveredTests = false
-
-    useJUnitPlatform()
-    ignoreFailures = true
     
-    // --- ESTA ES LA SOLUCIÓN ---
-    // En lugar de pasar TODO (que causa el error), pasamos SOLO el tag.
-    systemProperty "cucumber.filter.tags", System.getProperty("cucumber.filter.tags")
-    
+    // 1. Permite que Serenity trabaje en Java 21
     jvmArgs(
         "-XX:+EnableDynamicAgentLoading",
         "-Djdk.attach.allowAttachSelf=true",
         "--add-opens", "java.base/java.lang=ALL-UNNAMED",
-        "--add-opens", "java.base/java.util=ALL-UNNAMED"
+        "--add-opens", "java.base/java.util=ALL-UNNAMED",
+        "--add-opens", "java.base/java.lang.reflect=ALL-UNNAMED"
     )
+
+    // 2. Asegura que el tag pase de la terminal al motor de Cucumber
+    systemProperty "cucumber.filter.tags", System.getProperty("cucumber.filter.tags")
+    
+    ignoreFailures = true
 }
 
 task generateEvidence(type: JavaExec) {

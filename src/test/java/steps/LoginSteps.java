@@ -17,7 +17,6 @@ public class LoginSteps {
     @Managed
     WebDriver driver;
 
-    // Serenity inicializa esta página automáticamente
     BasePage basePage;
     LoginPage loginPage;
 
@@ -37,12 +36,10 @@ public class LoginSteps {
     @And("Clic en el botón de Acceder")
     public void hacerClicEnBotonIniciarSesion() {
         loginPage.clickEnLogin();
-        System.out.println("Clic en el botón de Acceder realizado.");
     }
 
     @Then("Debería ver el mensaje de error")
     public void validarElMensajeDeError() {
-        //try { Thread.sleep(1000); } catch (InterruptedException e) {}
         loginPage.validarMensajePresente();
     }
 
