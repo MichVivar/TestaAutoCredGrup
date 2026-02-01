@@ -1,0 +1,16 @@
+# Gradle
+.gradle/
+build/
+
+# Serenity / Reportes
+target/
+test-output/
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+.DS_Store
+
+# Evidencias locales
+Evidencias_PDF/

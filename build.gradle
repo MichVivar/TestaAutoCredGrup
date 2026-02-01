@@ -1,0 +1,81 @@
+plugins {
+    id 'java'
+    id "net.serenity-bdd.serenity-gradle-plugin" version "4.0.30"
+}
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    serenityVersion = '4.0.30'
+}
+
+dependencies {
+    testImplementation "net.serenity-bdd:serenity-core:${serenityVersion}"
+    testImplementation "net.serenity-bdd:serenity-cucumber:${serenityVersion}"
+    testImplementation "net.serenity-bdd:serenity-junit5:${serenityVersion}"
+    testImplementation "net.serenity-bdd:serenity-reports:${serenityVersion}"
+    
+    testImplementation "org.junit.vintage:junit-vintage-engine:5.10.1"
+    
+    testImplementation "org.junit.platform:junit-platform-suite:1.10.1"
+    testRuntimeOnly "org.junit.platform:junit-platform-suite-engine:1.10.1"
+    
+    testRuntimeOnly "io.cucumber:cucumber-junit-platform-engine:7.15.0"
+    
+    implementation 'org.slf4j:slf4j-simple:2.0.9'
+    testImplementation "org.assertj:assertj-core:3.24.2"
+
+    // Motor para crear PDFs
+    implementation 'com.itextpdf:itext7-core:7.2.5'
+    // Para leer los archivos JSON de Serenity
+    implementation 'com.google.code.gson:gson:2.10.1'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+test {
+    useJUnitPlatform()
+    failOnNoDiscoveredTests = false
+
+    useJUnitPlatform()
+    ignoreFailures = true
+    
+    // --- ESTA ES LA SOLUCIÓN ---
+    // En lugar de pasar TODO (que causa el error), pasamos SOLO el tag.
+    systemProperty "cucumber.filter.tags", System.getProperty("cucumber.filter.tags")
+    
+    jvmArgs(
+        "-XX:+EnableDynamicAgentLoading",
+        "-Djdk.attach.allowAttachSelf=true",
+        "--add-opens", "java.base/java.lang=ALL-UNNAMED",
+        "--add-opens", "java.base/java.util=ALL-UNNAMED"
+    )
+}
+
+task generateEvidence(type: JavaExec) {
+    group = "Reporting"
+    description = "Genera reportes PDF a partir de los JSON de Serenity"
+    mainClass = "utils.EvidenceReport"
+    classpath = sourceSets.test.runtimeClasspath
+    
+    // 1. Obliga a que corra DESPUÉS de los tests y el agregado de Serenity
+    mustRunAfter test, aggregate 
+    
+    // 2. Por si necesitas pasarle parámetros en el futuro
+    standardOutput = System.out
+    errorOutput = System.err
+}
+
+task runAllTests {
+    dependsOn 'clean', 'test', 'aggregate', 'generateEvidence'
+    
+    tasks.findByName('test').mustRunAfter 'clean'
+    tasks.findByName('aggregate').mustRunAfter 'test'
+    tasks.findByName('generateEvidence').mustRunAfter 'aggregate'
+}
