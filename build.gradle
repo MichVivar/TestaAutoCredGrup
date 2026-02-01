@@ -79,3 +79,10 @@ task runAllTests {
     tasks.findByName('aggregate').mustRunAfter 'test'
     tasks.findByName('generateEvidence').mustRunAfter 'aggregate'
 }
+
+task runEvidenceReport(type: JavaExec) {
+    group = "Verification"
+    description = "Genera el reporte PDF de evidencias basado en los JSON de Serenity."
+    mainClass = "utils.EvidenceReport"
+    classpath = sourceSets.test.runtimeClasspath
+}
