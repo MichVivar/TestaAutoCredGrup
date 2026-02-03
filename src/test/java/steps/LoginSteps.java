@@ -33,6 +33,7 @@ public class LoginSteps {
         loginPage.ingresarPassword(password);
     }
 
+
     @And("Clic en el botón de Acceder")
     public void hacerClicEnBotonIniciarSesion() {
         loginPage.clickEnLogin();

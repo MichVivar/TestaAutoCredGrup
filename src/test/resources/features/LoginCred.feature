@@ -12,14 +12,15 @@ Feature: Autenticación de Usuario
 
     Examples:
       | user          | password |
-      | 22245         | DDF00301 |
-      | 22223         | Da100301 |
+      | MjIzNDU=      | RGExMDAzMDE= |
+      | MzQ1MzQ=      | RGExMDAzMDE= |
+      | MjA0MDU=      | MzQ1MzQ=     |
 
   # 2. SEGUNDO: El camino feliz (Tu "Escenario feliz")
   # Este va al final porque es el que "cierra" el ciclo de pruebas del Login
   @happy_path @smoke
   Scenario: Ingreso exitoso para acceder al sistema
     Given El asesor se encuentra en la página de inicio de sesión de TeonCred
-    When Ingresa el usuario "20405" y la contraseña "Da100301"
+    When Ingresa el usuario "MjA0MDU=" y la contraseña "RGExMDAzMDE="
     And Clic en el botón de Acceder
     Then El asesor debería ser redirigido al panel principal de TeonCred

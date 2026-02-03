@@ -3,6 +3,8 @@ package pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
+import utils.SecurityUtil;
+
 
 public class LoginPage extends BasePage {
 
@@ -23,11 +25,13 @@ public class LoginPage extends BasePage {
     // FUNCIONES 
     // =======================================================
     public void ingresarUsuario(String usuario) {
-        escribe(inputUsuario, usuario,"Usuario");
+        String usuarioReal = SecurityUtil.decrypt(usuario);
+        escribe(inputUsuario, usuarioReal,"Usuario");
     }
 
     public void ingresarPassword(String password) {
-        escribe(passUser, password,"Contraseña");
+        String passReal = SecurityUtil.decrypt(password);
+        escribe(passUser, passReal,"Contraseña");
     }
 
     public void clickEnLogin() {

@@ -7,6 +7,7 @@ import static org.hamcrest.Matchers.containsString;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import utils.SecurityUtil;
 
 public class BasePage extends PageObject {
 
@@ -117,6 +118,10 @@ public class BasePage extends PageObject {
             System.out.println("ℹ️ El campo no tiene atributo placeholder o no se pudo leer, ignorando...");
         }
     }
-    
+
+    protected String obtenerDatoSeguro(String datoCifrado) {
+        return SecurityUtil.decrypt(datoCifrado);
+    }
+        
 
 }
