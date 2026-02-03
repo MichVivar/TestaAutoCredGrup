@@ -22,11 +22,4 @@ public class SecurityUtil {
         }
     }
 
-
-    // Método auxiliar para saber si el dato ya viene descifrado
-    private static boolean usuarioEsTextoPlano(String texto) {
-        // Si no tiene el '=' típico de Base64 o es muy corto, 
-        // probablemente es texto plano (como "20405")
-        return texto == null || !texto.contains("="); 
-    }
 }
